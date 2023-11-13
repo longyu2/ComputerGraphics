@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>canvas星星动画</title>
+    <style>
+      body {
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        color: #ccc;
+      }
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #sel {
+        font-size: 20px;
+        line-height: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <canvas id="tutorial" width="1000" height="1000"></canvas>
+    </main>
+    <div class="menu">
+      <h2>选项</h2>
+      <h4>刷新页面会随机切换效果</h4>
+      <select name="" id="sel">
+        <option value="1">角的数量递增，图案放大</option>
+        <option value="2">角的数量递增，图案不放大</option>
+        <option value="3">角的数量递减，图案不放大</option>
+        <option value="4">角的数量不变，图案放大</option>
+        <option value="5">角的数量递减，图案缩小</option>
+      </select>
+    </div>
+
+    <script type="module" src="index2.js"></script>
+  </body>
+</html>
