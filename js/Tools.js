@@ -1,4 +1,3 @@
-
 // 坐标系旋转
 const translate = (x, y, n) => {
     const x1 = x * Math.cos(n) + Math.sin(n) * y;
@@ -7,15 +6,15 @@ const translate = (x, y, n) => {
 }
 
 // 从平面直角坐标系转化为屏幕坐标系
-const xyToComputerXy =  (x, y, W, H, multiple = 1) => {
-    let x1 = parseInt((W / 2 + x));
-    let y1 = parseInt((H / 2 - y));
-    return { x: x1 * 1, y: y1 * 1 }
+const xyToComputerXy = (x, y, W = 15, H = 15, multiple = 1) => {
+    let x1 =(W / 2 + x);
+    let y1 = (H / 2 - y);
+    return { x:  parseInt(x1 * multiple), y: parseInt(y1 * multiple) }
 }
 
 
 // canvas 画线
-const drawLine= (a,b,ctx) =>{
+const drawLine = (a, b, ctx) => {
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
     ctx.lineTo(b.x, b.y);
@@ -25,4 +24,4 @@ const drawLine= (a,b,ctx) =>{
 };
 
 
-export {translate,xyToComputerXy,drawLine}
+export { translate, xyToComputerXy, drawLine }

@@ -1,4 +1,4 @@
-import { translate, xyToComputerXy, drawLine } from "./canvasTools.js"
+import { translate, xyToComputerXy, drawLine } from "./Tools.js"
 
 // 定义init主函数
 const animatePlay = (value) => {
@@ -37,8 +37,8 @@ const animatePlay = (value) => {
             prevPoint = point
             point = translate(point.x, point.y, (Math.PI - (Math.PI / 360 * jiao)))
             let [x1, y1] = [point.x, point.y]
-            let B1 = { x: xyToComputerXy(prevPoint.x, prevPoint.y, 1000, 1000, 2).x, y: xyToComputerXy(prevPoint.x, prevPoint.y, 1000, 1000, 2).y }
-            let B2 = { x: xyToComputerXy(x1, y1, 1000, 1000, 2).x, y: xyToComputerXy(x1, y1, 1000, 1000, 2).y }
+            let B1 = { x: xyToComputerXy(prevPoint.x, prevPoint.y, 1000, 1000,1).x, y: xyToComputerXy(prevPoint.x, prevPoint.y, 1000, 1000, 1).y }
+            let B2 = { x: xyToComputerXy(x1, y1, 1000, 1000, 1).x, y: xyToComputerXy(x1, y1, 1000, 1000, 1).y }
 
             drawLine(B1, B2, ctx)
             ctx.strokeStyle = "#cccccc";
