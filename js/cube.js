@@ -50,6 +50,13 @@ function draw() {
         cubePoint.y = element.y
 
 
+
+        const yy = translate(cubePoint.y , cubePoint.z - 15, du).x
+        cubePoint.z = translate(cubePoint.y , cubePoint.z - 15, du).y + 15
+        cubePoint.y = yy
+
+
+
         // 未进行坐标转换，此时还是平面直角坐标
         const pointXy = compute(cubePoint.x, cubePoint.y, cubePoint.z, distance)
         // 进行转换
