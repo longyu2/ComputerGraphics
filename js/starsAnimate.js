@@ -1,4 +1,5 @@
-import { translate, xyToComputerXy, drawLine } from "./Tools.js"
+import { translate, xyToComputerXy } from "./Tools.js"
+import {  drawLine } from "./canvasTools.js"
 
 // 定义init主函数
 const animatePlay = (value) => {

@@ -13,15 +13,7 @@ const xyToComputerXy = (x, y, W = 15, H = 15, multiple = 1) => {
 }
 
 
-// canvas 画线
-const drawLine = (a, b, ctx) => {
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill()
-};
 
 
-export { translate, xyToComputerXy, drawLine }
+
+export { translate, xyToComputerXy }
