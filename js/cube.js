@@ -98,6 +98,7 @@ function compute(x, y, z, j) {
 
   return { x: x1, y: y1 };
 }
+
 let center = { z: 15 }; // 先计算出正方体中心的z坐标
 let cubePoint = {}; // 旋转后的正方体顶点坐标
 // 新建一个点的备份，防止translate时出现问题
@@ -117,6 +118,7 @@ for (let i = 0; i < cube.length; i++) {
 
 let lifangti3d;
 // 帧绘画函数
+
 function draw() {
   ctx.clearRect(0, 0, 10000, 10000);
   let cubeProjection = [];
@@ -152,13 +154,12 @@ function draw() {
 
     for (let j = 0; j < cube[i].length; j++) {
       cubePoint = cube[i][j];
-      // 绕y旋转
 
       // 绕y轴旋转
       pointCopy = JSON.parse(JSON.stringify(cubePoint));
-      cubePoint.x = translate(pointCopy.x, pointCopy.z - center.z, du).x;
+      cubePoint.x = translate(pointCopy.x, pointCopy.z - center.z, ppp).x;
       cubePoint.z =
-        translate(pointCopy.x, pointCopy.z - center.z, du).y + center.z; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
+        translate(pointCopy.x, pointCopy.z - center.z, ppp).y + center.z; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
 
       pointCopy = JSON.parse(JSON.stringify(cubePoint)); // 重置复制点
 
@@ -172,7 +173,6 @@ function draw() {
   }
 
   // 绘制三角面
-
   let styles = ["red", "blue", "green", "orange", "gray", "yellow"];
 
   deep[6].deepNumber -= 7;
@@ -184,15 +184,11 @@ function draw() {
     deep[i + 1].deepNumber = deep[i + 1].deepNumber;
   }
   deep.sort(handle("deepNumber"));
-  console.table(deep);
 
   // 根据deep来决定绘制顺序,根据deep中存储的三角面深度信息进行绘制
   for (let i = deep.length - 1; i >= 0; i--) {
     ctx.strokeStyle = styles[parseInt(deep[i].index / 2)];
 
-    console.log(deep[i].index);
-    console.log(Math.round(deep[i].index / 2));
-    console.log(ctx.strokeStyle);
     ctx.fillStyle = ctx.strokeStyle;
     // ctx.clearRect(0, 0, 10000, 10000);
     drawTriangle(
@@ -207,17 +203,20 @@ function draw() {
 }
 
 // 控制单tick之间变化速度
-let ppp = (2 * Math.PI) / 360 / 2900; // 每个动作旋转的幅度
+let ppp = (2 * Math.PI) / 360; // 每个动作旋转的幅度
 let index = 0;
-let du = 2 * Math.PI;
+let du = Math.PI * 2; // 指示当前角度的值
 
 draw();
 
 // setInterval(() => {
+
 //   if (du < 0) {
 //     du = 2 * Math.PI;
+//     alert(2)
 //   } else {
 //     du -= ppp;
+//     console.log(du);
 //   }
 
 //   if (distance > 0) {
@@ -258,16 +257,27 @@ canvas.onmousedown = (e) => {
   mouse.isDown = true;
 };
 
+// 检测移动
 canvas.onmousemove = (e) => {
   if (mouse.isDown) {
     const changeX = mouse.prevX === 0 ? 0 : e.clientX - mouse.prevX; // 检测鼠标x移动了多少,三元，当prevX  = 0 时需要额外处理
-    mouse.prevX = e.clientX;
-    du -= (((2 * Math.PI) / 360) * 0.28 * changeX) / 20; // 根据改变量绘图
+    mouse.prevX = e.clientX; // 将此时坐标记录
+
+    // 判断正向还是反向
+    if (changeX > 0) {
+      ppp = -1 * ppp;
+    }
+    du -= ppp;
 
     if (du < 0) {
       du = 2 * Math.PI;
     }
+
     draw();
+
+    if (changeX > 0) {
+      ppp = -1 * ppp;
+    }
   }
 };
 
@@ -277,3 +287,24 @@ canvas.onmouseup = (e) => {
 };
 
 draw();
+// 实现canvas 图形
+var myImageData = ctx.createImageData(10, 10);
+for (let i = 0; i < 10; i++) {
+  for (let j = 0; j < 10; j++) {
+    myImageData.data[j * 40 + i * 4 + 0] = 255;
+    myImageData.data[j * 40 + i * 4 + 1] = 0;
+
+    myImageData.data[j * 40 + i * 4 + 2] = 0;
+    myImageData.data[j * 40 + i * 4 + 3] = 255;
+  }
+}
+
+console.log(myImageData.data);
+
+ctx.putImageData(myImageData, 700, 500);
+
+var myImageData2 = ctx.getImageData(150, 170, 10, 10);
+
+ctx.putImageData(myImageData2, 500, 500);
+
+console.log(myImageData2.data);

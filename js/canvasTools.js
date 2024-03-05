@@ -9,13 +9,15 @@ const drawLine = (a, b, ctx) => {
 };
 
 const drawTriangle = (a,b,c,ctx) =>{
+    ctx.lineWidth = 5
+    ctx.lineJoin ="round"
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
     ctx.lineTo(b.x, b.y);
     ctx.lineTo(c.x, c.y);
     ctx.closePath();
     ctx.stroke();
-    ctx.fill()
+    // ctx.fill()
 }
 // 
 
@@ -24,3 +26,7 @@ const drawTriangle = (a,b,c,ctx) =>{
 export{
     drawLine,drawTriangle
 }
+
+
+// 自己画三角形还得自己抗锯齿
+// 实现一个绘制三角形函数吧
