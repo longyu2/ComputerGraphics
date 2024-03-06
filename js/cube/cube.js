@@ -1,5 +1,10 @@
-import { xyToComputerXy, translate } from "./Tools.js";
-import { drawLine, drawTriangle } from "./canvasTools.js";
+import { xyToComputerXy, translate } from "../Tools.js";
+import { drawTriangleCanvas } from "../canvasTools.js";
+import {
+  isPointInsideTriangle,
+  computeArea,
+  drawTriangleData,
+} from "./drawTriangle.js";
 
 // 定义canvas
 var canvas = document.getElementById("tutorial");
@@ -86,7 +91,7 @@ let cube = [
 let deep = [];
 
 // 计算摄像机投影
-function compute(x, y, z, j) {
+const compute = (x, y, z, j) => {
   let x1 = 0;
   let y1 = 0;
 
@@ -97,7 +102,7 @@ function compute(x, y, z, j) {
   y1 = (j * y) / z;
 
   return { x: x1, y: y1 };
-}
+};
 
 let center = { z: 15 }; // 先计算出正方体中心的z坐标
 let cubePoint = {}; // 旋转后的正方体顶点坐标
@@ -119,7 +124,7 @@ for (let i = 0; i < cube.length; i++) {
 let lifangti3d;
 // 帧绘画函数
 
-function draw() {
+const draw = () => {
   ctx.clearRect(0, 0, 10000, 10000);
   let cubeProjection = [];
 
@@ -191,7 +196,7 @@ function draw() {
 
     ctx.fillStyle = ctx.strokeStyle;
     // ctx.clearRect(0, 0, 10000, 10000);
-    drawTriangle(
+    drawTriangleCanvas(
       cubeProjection[deep[i].index][0],
       cubeProjection[deep[i].index][1],
       cubeProjection[deep[i].index][2],
@@ -200,7 +205,7 @@ function draw() {
   }
 
   deep = [];
-}
+};
 
 // 控制单tick之间变化速度
 let ppp = (2 * Math.PI) / 360; // 每个动作旋转的幅度
@@ -229,20 +234,6 @@ draw();
 
 //   draw();
 // }, 16.6);
-
-// 定义一个监控鼠标的类
-// class mouse {
-//     x
-//     y
-//     isDown
-//     prevX
-//     constructor() {
-//         this.x = 0
-//         this.y = 0
-//         this.isDown = false
-//         this.prevX = 0
-//     }
-// }
 
 // 记录鼠标坐标
 const mouse = {
@@ -287,24 +278,70 @@ canvas.onmouseup = (e) => {
 };
 
 draw();
+
 // 实现canvas 图形
-var myImageData = ctx.createImageData(10, 10);
-for (let i = 0; i < 10; i++) {
-  for (let j = 0; j < 10; j++) {
-    myImageData.data[j * 40 + i * 4 + 0] = 255;
-    myImageData.data[j * 40 + i * 4 + 1] = 0;
+// var myImageData = ctx.createImageData(10, 10);
+// for (let i = 0; i < 10; i++) {
+//   for (let j = 0; j < 10; j++) {
+//     myImageData.data[j * 40 + i * 4 + 0] = 255;
+//     myImageData.data[j * 40 + i * 4 + 1] = 0;
 
-    myImageData.data[j * 40 + i * 4 + 2] = 0;
-    myImageData.data[j * 40 + i * 4 + 3] = 255;
-  }
-}
+//     myImageData.data[j * 40 + i * 4 + 2] = 0;
+//     myImageData.data[j * 40 + i * 4 + 3] = 255;
+//   }
+// }
 
-console.log(myImageData.data);
+// console.log(myImageData.data);
 
-ctx.putImageData(myImageData, 700, 500);
+// ctx.putImageData(myImageData, 700, 500);
 
-var myImageData2 = ctx.getImageData(150, 170, 10, 10);
+// var myImageData2 = ctx.getImageData(150, 170, 10, 10);
 
-ctx.putImageData(myImageData2, 500, 500);
+// ctx.putImageData(myImageData2, 500, 500);
 
-console.log(myImageData2.data);
+// console.log(myImageData2.data);
+
+drawTriangleData(
+  {
+    x: 700,
+    y: 500,
+  },
+  {
+    x: 600,
+    y: 600,
+  },
+  {
+    x: 800,
+    y: 600,
+  },
+  ctx
+);
+
+// -----C 700,500
+
+// A  600,600         B 800,600
+
+canvas.onclick = (e) => {
+  isPointInsideTriangle(
+    {
+      x: 600,
+      y: 600,
+    },
+
+    {
+      x: 800,
+      y: 600,
+    },
+    {
+      x: 700,
+      y: 500,
+    },
+    {
+      x: e.offsetX,
+      y: e.offsetY,
+    }
+  );
+};
+
+//  绘制三角形
+// 首先，输入三个坐标， 获得最小x，最大x，最小y。最大y

@@ -8,8 +8,9 @@ const drawLine = (a, b, ctx) => {
     ctx.fill()
 };
 
-const drawTriangle = (a,b,c,ctx) =>{
-    ctx.lineWidth = 5
+// 画三角形
+const drawTriangleCanvas = (a,b,c,ctx,lineWidth=5) =>{
+    ctx.lineWidth = lineWidth
     ctx.lineJoin ="round"
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
@@ -24,7 +25,7 @@ const drawTriangle = (a,b,c,ctx) =>{
 
 
 export{
-    drawLine,drawTriangle
+    drawLine,drawTriangleCanvas
 }
 
 
