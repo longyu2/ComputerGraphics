@@ -8,6 +8,8 @@ import {
 
 // 定义canvas
 var canvas = document.getElementById("tutorial");
+
+
 var ctx = canvas.getContext("2d");
 ctx.strokeStyle = "red";
 let distance = 4; // 摄像机到视平面的距离    它也可以理解为焦距，焦距越大，物体占画面的比例越大，同时最大可视角度也变小
@@ -90,6 +92,9 @@ let cube = [
 // 深度权重
 let deep = [];
 
+
+
+
 // 计算摄像机投影
 const compute = (x, y, z, j) => {
   let x1 = 0;
@@ -122,20 +127,11 @@ for (let i = 0; i < cube.length; i++) {
 }
 
 let lifangti3d;
-// 帧绘画函数
 
+// 帧绘画函数
 const draw = () => {
   ctx.clearRect(0, 0, 10000, 10000);
   let cubeProjection = [];
-
-  // 根据对象的属性排序
-  const handle = (property) => {
-    return function (a, b) {
-      const val1 = a[property];
-      const val2 = b[property];
-      return val1 - val2;
-    };
-  };
 
   for (let i = 0; i < cube.length; i++) {
     // 计算6个面的深度信息
@@ -144,15 +140,6 @@ const draw = () => {
       index: i,
       deepNumber: ((cube[i][0].z + cube[i][1].z) / 2 + cube[i][2].z) / 2,
     });
-
-    // for (let i = 0; i < cube.length; i++) {
-    //     console.log(cube[i]);
-    //     center.z += cube[i].z
-    //     if(i===cube.length-1){
-    //         console.log(center.z);
-    //         center.z /= 8   // 取8顶点的平均z
-    //     }
-    // }
 
     let pointXy = [];
     let arr = [];
@@ -180,22 +167,19 @@ const draw = () => {
   // 绘制三角面
   let styles = ["red", "blue", "green", "orange", "gray", "yellow"];
 
-  deep[6].deepNumber -= 7;
-  deep[3].deepNumber -= 8;
-
-  //   对每个面的deep进行平均,取大值
-  for (let i = 0; i < deep.length; i += 2) {
-    deep[i].deepNumber = (deep[i].deepNumber + deep[i + 1].deepNumber) / 2;
-    deep[i + 1].deepNumber = deep[i + 1].deepNumber;
-  }
-  deep.sort(handle("deepNumber"));
-
   // 根据deep来决定绘制顺序,根据deep中存储的三角面深度信息进行绘制
   for (let i = deep.length - 1; i >= 0; i--) {
     ctx.strokeStyle = styles[parseInt(deep[i].index / 2)];
-
     ctx.fillStyle = ctx.strokeStyle;
-    // ctx.clearRect(0, 0, 10000, 10000);
+
+    drawTriangleData(
+      cubeProjection[deep[i].index][0],
+      cubeProjection[deep[i].index][1],
+      cubeProjection[deep[i].index][2],
+      ctx
+    );
+
+   
     drawTriangleCanvas(
       cubeProjection[deep[i].index][0],
       cubeProjection[deep[i].index][1],
@@ -301,47 +285,32 @@ draw();
 
 // console.log(myImageData2.data);
 
-drawTriangleData(
-  {
-    x: 700,
-    y: 500,
-  },
-  {
-    x: 600,
-    y: 600,
-  },
-  {
-    x: 800,
-    y: 600,
-  },
-  ctx
-);
+// drawTriangleData(
+//   {
+//     x: 700,
+//     y: 500,
+//   },
+//   {
+//     x: 600,
+//     y: 600,
+//   },
+//   {
+//     x: 800,
+//     y: 600,
+//   },
+//   ctx
+// );
 
 // -----C 700,500
 
 // A  600,600         B 800,600
 
-canvas.onclick = (e) => {
-  isPointInsideTriangle(
-    {
-      x: 600,
-      y: 600,
-    },
+ctx.fillStyle="black"
 
-    {
-      x: 800,
-      y: 600,
-    },
-    {
-      x: 700,
-      y: 500,
-    },
-    {
-      x: e.offsetX,
-      y: e.offsetY,
-    }
-  );
-};
+ctx.fillRect(1000, 500, 10, 1);
+
+
 
 //  绘制三角形
 // 首先，输入三个坐标， 获得最小x，最大x，最小y。最大y
+

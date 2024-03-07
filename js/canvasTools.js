@@ -18,7 +18,7 @@ const drawTriangleCanvas = (a,b,c,ctx,lineWidth=5) =>{
     ctx.lineTo(c.x, c.y);
     ctx.closePath();
     ctx.stroke();
-    // ctx.fill()
+    ctx.fill()
 }
 // 
 
