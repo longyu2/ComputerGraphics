@@ -70,7 +70,6 @@ const drawTriangleData = (a, b, c, ctx) => {
       }
     }
 
-    console.log(count);
     ctx.fillRect(minX + 200 + left, y + 400, count, 1);
   }
 

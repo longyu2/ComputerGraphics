@@ -9,10 +9,9 @@ import {
 // 定义canvas
 var canvas = document.getElementById("tutorial");
 
-
 var ctx = canvas.getContext("2d");
 ctx.strokeStyle = "red";
-let distance = 4; // 摄像机到视平面的距离    它也可以理解为焦距，焦距越大，物体占画面的比例越大，同时最大可视角度也变小
+let focalLength = 4; // 摄像机到视平面的距离    它也可以理解为焦距，焦距越大，物体占画面的比例越大，同时最大可视角度也变小
 
 // 采用左手系 摄像机原点为0坐标
 
@@ -20,80 +19,86 @@ let distance = 4; // 摄像机到视平面的距离    它也可以理解为焦�
 let cube = [
   // 底面
   [
-    { x: -5, y: -5, z: 10 },
-    { x: 5, y: -5, z: 10 },
-    { x: 5, y: -5, z: 20 },
+    { x: -5, y: -5, z: -5 },
+    { x: 5, y: -5, z: -5 },
+    { x: 5, y: -5, z: 5 },
   ],
   [
-    { x: -5, y: -5, z: 10 },
-    { x: -5, y: -5, z: 20 },
-    { x: 5, y: -5, z: 20 },
+    { x: -5, y: -5, z: -5 },
+    { x: -5, y: -5, z: 5 },
+    { x: 5, y: -5, z: 5 },
   ],
   // 右侧
   [
-    { x: 5, y: -5, z: 10 },
-    { x: 5, y: 5, z: 10 },
-    { x: 5, y: 5, z: 20 },
+    { x: 5, y: -5, z: -5 },
+    { x: 5, y: 5, z: -5 },
+    { x: 5, y: 5, z: 5 },
   ],
   [
-    { x: 5, y: -5, z: 10 },
-    { x: 5, y: -5, z: 20 },
-    { x: 5, y: 5, z: 20 },
-  ],
-  // 后侧
-  [
-    { x: 5, y: -5, z: 20 },
-    { x: 5, y: 5, z: 20 },
-    { x: -5, y: 5, z: 20 },
+    { x: 5, y: -5, z: -5 },
+    { x: 5, y: -5, z: 5 },
+    { x: 5, y: 5, z: 5 },
   ],
   // 后侧
   [
-    { x: 5, y: -5, z: 20 },
-    { x: -5, y: -5, z: 20 },
-    { x: -5, y: 5, z: 20 },
+    { x: 5, y: -5, z: 5 },
+    { x: 5, y: 5, z: 5 },
+    { x: -5, y: 5, z: 5 },
+  ],
+  // 后侧
+  [
+    { x: 5, y: -5, z: 5 },
+    { x: -5, y: -5, z: 5 },
+    { x: -5, y: 5, z: 5 },
   ],
   //左
 
   [
-    { x: -5, y: 5, z: 20 },
-    { x: -5, y: -5, z: 20 },
-    { x: -5, y: -5, z: 10 },
+    { x: -5, y: 5, z: 5 },
+    { x: -5, y: -5, z: 5 },
+    { x: -5, y: -5, z: -5 },
   ],
   [
-    { x: -5, y: 5, z: 20 },
-    { x: -5, y: 5, z: 10 },
-    { x: -5, y: -5, z: 10 },
+    { x: -5, y: 5, z: 5 },
+    { x: -5, y: 5, z: -5 },
+    { x: -5, y: -5, z: -5 },
   ],
 
   // 前
   [
-    { x: -5, y: 5, z: 10 },
-    { x: -5, y: -5, z: 10 },
-    { x: 5, y: -5, z: 10 },
+    { x: -5, y: 5, z: -5 },
+    { x: -5, y: -5, z: -5 },
+    { x: 5, y: -5, z: -5 },
   ],
   [
-    { x: -5, y: 5, z: 10 },
-    { x: 5, y: 5, z: 10 },
-    { x: 5, y: -5, z: 10 },
+    { x: -5, y: 5, z: -5 },
+    { x: 5, y: 5, z: -5 },
+    { x: 5, y: -5, z: -5 },
   ],
   // 上
   [
-    { x: -5, y: 5, z: 10 },
-    { x: 5, y: 5, z: 10 },
-    { x: 5, y: 5, z: 20 },
+    { x: -5, y: 5, z: -5 },
+    { x: 5, y: 5, z: -5 },
+    { x: 5, y: 5, z: 5 },
   ],
   [
-    { x: -5, y: 5, z: 10 },
-    { x: -5, y: 5, z: 20 },
-    { x: 5, y: 5, z: 20 },
+    { x: -5, y: 5, z: -5 },
+    { x: -5, y: 5, z: 5 },
+    { x: 5, y: 5, z: 5 },
   ],
 ];
 
+// 调整物体距离起点z轴的偏移
+let distance = 15;
+
+for (let i = 0; i < cube.length; i++) {
+  for (let j = 0; j < cube[i].length; j++) {
+    cube[i][j].z += distance;
+  }
+}
+
 // 深度权重
 let deep = [];
-
-
-
 
 // 计算摄像机投影
 const compute = (x, y, z, j) => {
@@ -101,15 +106,19 @@ const compute = (x, y, z, j) => {
   let y1 = 0;
 
   if (j > z) {
-    console.error("j必须小于z");
+    console.error("j必须小于z,物体的z坐标必须大于焦距");
   }
+
   x1 = (j * x) / z;
   y1 = (j * y) / z;
+
+  if (z < 0) {
+    return null;
+  }
 
   return { x: x1, y: y1 };
 };
 
-let center = { z: 15 }; // 先计算出正方体中心的z坐标
 let cubePoint = {}; // 旋转后的正方体顶点坐标
 // 新建一个点的备份，防止translate时出现问题
 let pointCopy = JSON.parse(JSON.stringify(cubePoint));
@@ -118,11 +127,10 @@ let pointCopy = JSON.parse(JSON.stringify(cubePoint));
 for (let i = 0; i < cube.length; i++) {
   for (let j = 0; j < cube[i].length; j++) {
     cubePoint = cube[i][j];
-
     pointCopy = JSON.parse(JSON.stringify(cubePoint));
-    cubePoint.y = translate(pointCopy.y, pointCopy.z - center.z, Math.PI / 5).x;
+    cubePoint.y = translate(pointCopy.y, pointCopy.z - distance, Math.PI / 3).x;
     cubePoint.z =
-      translate(pointCopy.y, pointCopy.z - center.z, Math.PI / 5).y + center.z; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
+      translate(pointCopy.y, pointCopy.z - distance, Math.PI / 3).y + distance; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
   }
 }
 
@@ -133,12 +141,28 @@ const draw = () => {
   ctx.clearRect(0, 0, 10000, 10000);
   let cubeProjection = [];
 
-  for (let i = 0; i < cube.length; i++) {
-    // 计算6个面的深度信息
+  // 计算6个面的深度信息
+  for (let i = 0; i < cube.length; i += 1) {
+    // 计算三角形深度最低值
+    let min = cube[i][0].z;
+    let max = cube[i][0].z;
+    if (cube[i][1].z < min) {
+      min = cube[i][1].z;
+    }
+    if (cube[i][2].z < min) {
+      min = cube[i][2].z;
+    }
+    if (cube[i][1].z > max) {
+      max = cube[i][1].z;
+    }
+    if (cube[i][2].z > max) {
+      max = cube[i][2].z;
+    }
 
     deep.push({
       index: i,
-      deepNumber: ((cube[i][0].z + cube[i][1].z) / 2 + cube[i][2].z) / 2,
+      deepNumber:
+        min + (cube[i][0].z + cube[i][2].z + cube[i][1].z - max / 2) / 3 / 10, // 再加权三个点z坐标的平均值/10 ，这样当深度最低值相同时计算平均,去掉最大值
     });
 
     let pointXy = [];
@@ -149,13 +173,13 @@ const draw = () => {
 
       // 绕y轴旋转
       pointCopy = JSON.parse(JSON.stringify(cubePoint));
-      cubePoint.x = translate(pointCopy.x, pointCopy.z - center.z, ppp).x;
+      cubePoint.x = translate(pointCopy.x, pointCopy.z - distance, ppp).x;
       cubePoint.z =
-        translate(pointCopy.x, pointCopy.z - center.z, ppp).y + center.z; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
+        translate(pointCopy.x, pointCopy.z - distance, ppp).y + distance; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
 
       pointCopy = JSON.parse(JSON.stringify(cubePoint)); // 重置复制点
 
-      pointXy.push(compute(cubePoint.x, cubePoint.y, cubePoint.z, distance));
+      pointXy.push(compute(cubePoint.x, cubePoint.y, cubePoint.z, focalLength));
 
       arr.push(xyToComputerXy(pointXy[j].x, pointXy[j].y, 7, 7, 71.4285));
     }
@@ -163,6 +187,25 @@ const draw = () => {
     // 进行转换
     cubeProjection.push(arr);
   }
+
+  // 比较颜色相同的 ，取小值
+  for (let i = 0; i < deep.length; i += 2) {
+    if (deep[i].deepNumber > deep[i + 1].deepNumber) {
+      deep[i].deepNumber = deep[i + 1].deepNumber;
+    } else {
+      deep[i + 1].deepNumber = deep[i].deepNumber;
+    }
+  }
+
+  // 根据对象的属性排序
+  const handle = (property) => {
+    return function (a, b) {
+      const val1 = a[property];
+      const val2 = b[property];
+      return val1 - val2;
+    };
+  };
+  deep.sort(handle("deepNumber"));
 
   // 绘制三角面
   let styles = ["red", "blue", "green", "orange", "gray", "yellow"];
@@ -172,14 +215,13 @@ const draw = () => {
     ctx.strokeStyle = styles[parseInt(deep[i].index / 2)];
     ctx.fillStyle = ctx.strokeStyle;
 
-    drawTriangleData(
-      cubeProjection[deep[i].index][0],
-      cubeProjection[deep[i].index][1],
-      cubeProjection[deep[i].index][2],
-      ctx
-    );
+    // drawTriangleData(
+    //   cubeProjection[deep[i].index][0],
+    //   cubeProjection[deep[i].index][1],
+    //   cubeProjection[deep[i].index][2],
+    //   ctx
+    // );
 
-   
     drawTriangleCanvas(
       cubeProjection[deep[i].index][0],
       cubeProjection[deep[i].index][1],
@@ -192,32 +234,47 @@ const draw = () => {
 };
 
 // 控制单tick之间变化速度
-let ppp = (2 * Math.PI) / 360; // 每个动作旋转的幅度
+let ppp = (2 * Math.PI) / 360 / 2; // 每个动作旋转的幅度
 let index = 0;
 let du = Math.PI * 2; // 指示当前角度的值
 
 draw();
 
-// setInterval(() => {
+let left = true;
 
-//   if (du < 0) {
-//     du = 2 * Math.PI;
-//     alert(2)
-//   } else {
-//     du -= ppp;
-//     console.log(du);
-//   }
+setInterval(() => {
+  for (let i = 0; i < cube.length; i++) {
+    for (let j = 0; j < cube[i].length; j++) {
+      cube[i][j].z -= distance;
+    }
+  }
 
-//   if (distance > 0) {
-//     // distance-=0.05
-//     for (let i = 0; i < cube.length; i++) {
-//       const element = cube[i];
-//       //   element.z += 0.1;
-//     }
-//   }
+  if (distance <= 15) {
+    left = false;
+  } else if (distance >= 50) {
+    left = true;
+  }
 
-//   draw();
-// }, 16.6);
+  if (left) {
+    distance -= 0.1;
+  } else {
+    distance += 0.1;
+  }
+
+  for (let i = 0; i < cube.length; i++) {
+    for (let j = 0; j < cube[i].length; j++) {
+      cube[i][j].z += distance;
+    }
+  }
+
+  if (du < 0) {
+    du = 2 * Math.PI;
+  } else {
+    du -= ppp;
+  }
+
+  draw();
+}, 16.6);
 
 // 记录鼠标坐标
 const mouse = {
@@ -261,8 +318,6 @@ canvas.onmouseup = (e) => {
   mouse.prevX = 0;
 };
 
-draw();
-
 // 实现canvas 图形
 // var myImageData = ctx.createImageData(10, 10);
 // for (let i = 0; i < 10; i++) {
@@ -304,13 +359,3 @@ draw();
 // -----C 700,500
 
 // A  600,600         B 800,600
-
-ctx.fillStyle="black"
-
-ctx.fillRect(1000, 500, 10, 1);
-
-
-
-//  绘制三角形
-// 首先，输入三个坐标， 获得最小x，最大x，最小y。最大y
-

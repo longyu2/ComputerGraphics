@@ -9,6 +9,4 @@ const colorToRGB = (color) => {
   return colorChange;
 };
 
-export {
-  colorToRGB
-}
+export { colorToRGB };
