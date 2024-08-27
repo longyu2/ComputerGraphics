@@ -66,6 +66,9 @@ const drawTriangleData = (a, b, c, ctx) => {
         }
 
         // 对每一个点，都得确定深度，这里需要从此坐标发出一条射线，与原物相交
+
+
+        
         count++;
       }
     }

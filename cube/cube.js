@@ -1,12 +1,14 @@
-import { xyToComputerXy, translate,compute,rotateX } from "./js/Tools.js";
+import { xyToComputerXy, translate, compute, rotateX } from "./js/Tools.js";
 import { drawLine, drawTriangleCanvas } from "./js/canvasTools.js";
 import {
   isPointInsideTriangle,
   computeArea,
   drawTriangleData,
 } from "./drawTriangle.js";
-import { draw  } from "./js/draw.js";
-import { distanceZ ,moedels} from "./js/model.js";
+import { draw } from "./js/draw.js";
+import { distanceZ, moedels } from "./js/model.js";
+import { rotateImage } from "./js/ratateImage.js";
+
 
 //  初始化画布canvas
 var canvas = document.getElementById("tutorial");
@@ -17,7 +19,7 @@ ctx.strokeStyle = "red";
 
 let focalLength = 15; // 摄像机到视平面的距离，也就是焦距，焦距越大，物体占画面的比例越大，同时最大可视角度也变小
 // 表示世界坐标与摄像机坐标的差值，这样只需更该此差，则可实现摄像机的移动
-let offset = {x:0,y:0,z:0}
+let offset = { x: 0, y: 0, z: 0 }
 
 
 
@@ -26,7 +28,7 @@ let offset = {x:0,y:0,z:0}
 
 
 // 控制旋转速度
-let ppp = (2 * Math.PI) / 360 / 4; // 每个动作旋转的幅度
+let ppp = (2 * Math.PI) / 360 / 0.3; // 每个动作旋转的幅度
 let index = 0;
 let du = Math.PI * 2; // 指示当前角度的值
 
@@ -34,22 +36,22 @@ let du = Math.PI * 2; // 指示当前角度的值
 
 
 /** 键盘前进后退 */
-const logKey=(e)=>{
-  if (e.keyCode===38 && offset.z<30) {
-      offset.z +=1
+const logKey = (e) => {
+  if (e.keyCode === 38 && offset.z < 30) {
+    offset.z += 1
   }
 
   if (e.keyCode === 40) {
-    offset.z-=1
+    offset.z -= 1
   }
 
   if (e.key === "ArrowLeft") {
 
-    offset.x-=1
+    offset.x -= 1
   }
 
   if (e.key === "ArrowRight") {
-    offset.x+=1
+    offset.x += 1
   }
 }
 document.querySelector("body").addEventListener("keydown", logKey);
@@ -88,19 +90,23 @@ let left = true;
 /** 绘制地面*/
 const ground = (offset) => {
   for (let i = -90; i < 90; i += 8) {
-     ctx.strokeStyle = "black"
+    ctx.strokeStyle = "black"
     ctx.lineWidth = 0.2
-    let [xcx, xcy] = [compute(i-offset.x, -30-offset.y,30-offset.z, focalLength), compute(i-offset.x, -30-offset.y, 225-offset.z, focalLength)]
+    let [xcx, xcy] = [compute(i - offset.x, -30 - offset.y, 30 - offset.z, focalLength), compute(i - offset.x, -30 - offset.y, 225 - offset.z, focalLength)]
 
-  
+
     drawLine(xyToComputerXy(xcx.x, xcx.y, 15, 15, 66), xyToComputerXy(xcy.x, xcy.y, 15, 15, 66), ctx)
 
-    let [ycx, ycy] = [compute(-90-offset.x, -30-offset.y, i +140-offset.z, focalLength), compute(90-offset.x, -30-offset.y, i + 140-offset.z, focalLength)]
+    let [ycx, ycy] = [compute(-90 - offset.x, -30 - offset.y, i + 140 - offset.z, focalLength), compute(90 - offset.x, -30 - offset.y, i + 140 - offset.z, focalLength)]
     drawLine(xyToComputerXy(ycx.x, ycx.y, 15, 15, 66), xyToComputerXy(ycy.x, ycy.y, 15, 15, 66), ctx)
   }
 }
+
+
+
+
 // 绘制单帧
-const renderFrame = ()=>{
+const renderFrame = () => {
   // move(cube)
 
   // move(cube2)
@@ -119,8 +125,14 @@ const renderFrame = ()=>{
 
   // 将所有模型一一绘制
   for (let i = 0; i < moedels.length; i++) {
-    draw(moedels[i],distanceZ,ppp,focalLength,ctx,offset);
+    draw(moedels[i], distanceZ, ppp, focalLength, ctx, offset);
   }
+
+
+  rotateImage(ctx,du,offset,focalLength)   // 绘制旋转图片
+
+
+
 
   window.requestAnimationFrame(renderFrame)
 }
@@ -153,8 +165,8 @@ canvas.onmousemove = (e) => {
 
     ctx.clearRect(0, 0, 1000, 1000)
     ground(offset)
-  
-    draw(cube,distanceZ,ppp,focalLength,ctx,offset);
+
+    // draw(cube,distanceZ,ppp,focalLength,ctx,offset);
     console.log(distanceZ);
     if (changeX > 0) {
       ppp = -1 * ppp;
@@ -169,3 +181,9 @@ canvas.onmouseup = (e) => {
 
 
 renderFrame()
+
+
+
+
+
+export{du}

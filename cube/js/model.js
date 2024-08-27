@@ -83,12 +83,13 @@ for (let i = 0; i < cube.length; i++) {
     }
   }
   
+
   
   let cube2 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube2.length; i++) {
     for (let j = 0; j < 3; j++) {
       cube2[i][j].x += 0
-      cube2[i][j].y += 20
+      cube2[i][j].y += 12
       cube2[i][j].z += 0
     }
   
@@ -98,7 +99,7 @@ for (let i = 0; i < cube.length; i++) {
   for (let i = 0; i < cube3.length; i++) {
     for (let j = 0; j < 3; j++) {
       cube3[i][j].x += 0
-      cube3[i][j].y -= 20
+      cube3[i][j].y -= 12
       cube3[i][j].z += 0
     }
   
@@ -108,8 +109,8 @@ for (let i = 0; i < cube.length; i++) {
   let cube4 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube4.length; i++) {
     for (let j = 0; j < 3; j++) {
-      cube4[i][j].x += 20
-      cube4[i][j].y += 20
+      cube4[i][j].x += 12
+      cube4[i][j].y += 12
       cube4[i][j].z -= 0
     }
   }
@@ -119,7 +120,7 @@ for (let i = 0; i < cube.length; i++) {
   let cube5 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube.length; i++) {
     for (let j = 0; j < 3; j++) {
-      cube5[i][j].x += 20
+      cube5[i][j].x += 12
       cube5[i][j].y += 0
       cube5[i][j].z -= 0
     }
@@ -129,8 +130,8 @@ for (let i = 0; i < cube.length; i++) {
   let cube6 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube6.length; i++) {
     for (let j = 0; j < 3; j++) {
-      cube6[i][j].x += 20
-      cube6[i][j].y -= 20
+      cube6[i][j].x += 12
+      cube6[i][j].y -= 12
       cube6[i][j].z -= 0
     }
   
@@ -140,8 +141,8 @@ for (let i = 0; i < cube.length; i++) {
    let cube7 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube7.length; i++) {
     for (let j = 0; j < 3; j++) {
-      cube7[i][j].x -= 20
-      cube7[i][j].y += 20
+      cube7[i][j].x -= 12
+      cube7[i][j].y += 12
       cube7[i][j].z -= 0
     }
   
@@ -152,8 +153,8 @@ for (let i = 0; i < cube.length; i++) {
   let cube8 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube8.length; i++) {
     for (let j = 0; j < 3; j++) {
-      cube8[i][j].x -= 20
-      cube8[i][j].y -= 20
+      cube8[i][j].x -= 12
+      cube8[i][j].y -= 12
       cube8[i][j].z -= 0
     }
   
@@ -162,7 +163,7 @@ for (let i = 0; i < cube.length; i++) {
   let cube9 = JSON.parse(JSON.stringify(cube))
   for (let i = 0; i < cube9.length; i++) {
     for (let j = 0; j < 3; j++) {
-      cube9[i][j].x -= 20
+      cube9[i][j].x -= 12
       cube9[i][j].y += 0
       cube9[i][j].z -= 0
     }
