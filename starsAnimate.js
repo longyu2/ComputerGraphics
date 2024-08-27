@@ -1,5 +1,5 @@
-import { translate, xyToComputerXy } from "./Tools.js";
-import { drawLine } from "./canvasTools.js";
+import { translate, xyToComputerXy } from "./cube/js/Tools.js";
+import { drawLine } from "./cube/js/canvasTools.js";
 
 // 定义init主函数
 const animatePlay = (value) => {

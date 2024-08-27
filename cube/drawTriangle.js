@@ -1,4 +1,4 @@
-import { colorToRGB } from "../color.js";
+import { colorToRGB } from "./js/color.js";
 
 // 判断点是否在三角形内
 const isPointInsideTriangle = (a, b, c, point) => {

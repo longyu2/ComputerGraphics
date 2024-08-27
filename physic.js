@@ -1,4 +1,4 @@
-import { drawLine } from "./canvasTools.js";
+import { drawLine } from "./cube/js/canvasTools.js";
 
 // 定义canvas
 var canvas = document.getElementById("tutorial");
