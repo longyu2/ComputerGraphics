@@ -10,9 +10,11 @@ import { distanceZ, moedels } from "./js/model.js";
 import { rotateImage } from "./js/ratateImage.js";
 
 
+
+
 //  初始化画布canvas
 var canvas = document.getElementById("tutorial");
-var ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");
 ctx.strokeStyle = "red";
 
 
@@ -22,15 +24,22 @@ let focalLength = 15; // 摄像机到视平面的距离，也就是焦距，焦�
 let offset = { x: 0, y: 0, z: 0 }
 
 
-
+// 深度缓存数组！
+let zBufferArr = new Array()
+for (let i = 0; i < 1000; i++) {
+  let arr = new Array()
+  for (let j = 0; j < 1000; j++) {
+    arr.push(256)
+  }
+  zBufferArr.push(arr)
+}
 
 
 
 
 // 控制旋转速度
-let ppp = (2 * Math.PI) / 360 / 0.3; // 每个动作旋转的幅度
+let ppp = (2 * Math.PI) / 360 / 4; // 每个动作旋转的幅度
 let index = 0;
-let du = Math.PI * 2; // 指示当前角度的值
 
 
 
@@ -104,86 +113,83 @@ const ground = (offset) => {
 
 
 
-
+// console.log(zBufferArr);
 // 绘制单帧
 const renderFrame = () => {
-  // move(cube)
 
-  // move(cube2)
-  // move(cube3)
-
-  if (du < 0) {
-    du = 2 * Math.PI;
-  } else {
-    du -= ppp;
-  }
-
-
+  console.log(moedels);
 
   ctx.clearRect(0, 0, 1000, 1000)
   ground(offset)
 
+  // rotateImage(ctx,du,offset,focalLength)   // 绘制旋转图片
+
   // 将所有模型一一绘制
   for (let i = 0; i < moedels.length; i++) {
-    draw(moedels[i], distanceZ, ppp, focalLength, ctx, offset);
+
+
+    draw(moedels[i], distanceZ, ppp, focalLength, ctx, offset, zBufferArr);
   }
 
 
-  rotateImage(ctx,du,offset,focalLength)   // 绘制旋转图片
-
+  zBufferArr = []
+  for (let i = 0; i < 1000; i++) {
+    let arr = new Array()
+    for (let j = 0; j < 1000; j++) {
+      arr.push(256)
+    }
+    zBufferArr.push(arr)
+  }
 
 
 
   window.requestAnimationFrame(renderFrame)
 }
 // 记录鼠标坐标
-const mouse = {
-  x: 0,
-  y: 0,
-  isDown: false,
-  prevX: 0,
-};
+// const mouse = {
+//   x: 0,
+//   y: 0,
+//   isDown: false,
+//   prevX: 0,
+// };
 // 鼠标控制旋转, 目前只实现了x坐标旋转
-canvas.onmousedown = (e) => {
-  mouse.isDown = true;
-};
+// canvas.onmousedown = (e) => {
+//   mouse.isDown = true;
+// };
 // 鼠标移动
-canvas.onmousemove = (e) => {
-  if (mouse.isDown) {
-    const changeX = mouse.prevX === 0 ? 0 : e.clientX - mouse.prevX; // 检测鼠标x移动了多少,三元，当prevX  = 0 时需要额外处理
-    mouse.prevX = e.clientX; // 将此时坐标记录
+// canvas.onmousemove = (e) => {
+//   if (mouse.isDown) {
+//     const changeX = mouse.prevX === 0 ? 0 : e.clientX - mouse.prevX; // 检测鼠标x移动了多少,三元，当prevX  = 0 时需要额外处理
+//     mouse.prevX = e.clientX; // 将此时坐标记录
 
-    // 判断正向还是反向
-    if (changeX > 0) {
-      ppp = -1 * ppp;
-    }
-    du -= ppp;
-
-    if (du < 0) {
-      du = 2 * Math.PI;
-    }
-
-    ctx.clearRect(0, 0, 1000, 1000)
-    ground(offset)
-
-    // draw(cube,distanceZ,ppp,focalLength,ctx,offset);
-    console.log(distanceZ);
-    if (changeX > 0) {
-      ppp = -1 * ppp;
-    }
-  }
-};
-
-canvas.onmouseup = (e) => {
-  mouse.isDown = false;
-  mouse.prevX = 0;
-};
+//     // 判断正向还是反向
+//     if (changeX > 0) {
+//       ppp = -1 * ppp;
+//     }
 
 
-renderFrame()
+//     ctx.clearRect(0, 0, 1000, 1000)
+//     ground(offset)
+
+//     // draw(cube,distanceZ,ppp,focalLength,ctx,offset);
+//     console.log(distanceZ);
+//     if (changeX > 0) {
+//       ppp = -1 * ppp;
+//     }
+//   }
+// };
+
+// canvas.onmouseup = (e) => {
+//   mouse.isDown = false;
+//   mouse.prevX = 0;
+// };
+
+setTimeout(() => {
+  renderFrame()
+
+}, 500)
 
 
 
 
 
-export{du}

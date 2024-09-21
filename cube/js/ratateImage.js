@@ -41,9 +41,9 @@ const rotateImage =(ctx,du,offset,focalLength)=>{
     for (let j = 0; j < size*2; j += 1) {
 
       let cubePoint = {}
-      cubePoint.x = translate(imageData[i][j][0], imageData[i][j][2] - imZ, du).x - offset.x;
-      cubePoint.z = translate(imageData[i][j][0], imageData[i][j][2] - imZ, du).y + imZ - offset.z; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
-      cubePoint.y = imageData[i][j][1] - offset.y
+      cubePoint.y = translate(imageData[i][j][1], imageData[i][j][2] - imZ, du).x - offset.x;
+      cubePoint.z = translate(imageData[i][j][1], imageData[i][j][2] - imZ, du).y + imZ - offset.z; // 计算旋转坐标时先将中心移至原点，再移动回原坐标，则可绕自身旋转
+      cubePoint.x = imageData[i][j][0] - offset.x
       imageData[i][j] = cubePoint
 
       let asas = compute(cubePoint.x, cubePoint.y, cubePoint.z, focalLength)

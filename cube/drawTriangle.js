@@ -1,14 +1,9 @@
 import { colorToRGB } from "./js/color.js";
 
-// 判断点是否在三角形内
-const isPointInsideTriangle = (a, b, c, point) => {
-  const ABD = computeArea(a, b, point);
-  const ACD = computeArea(a, c, point);
-  const BCD = computeArea(b, c, point);
-  const ABC = computeArea(a, b, c);
 
-  return ABC === ABD + ACD + BCD; // 面积法，相等则在三角形内
-};
+
+
+
 
 // 计算三角面积，本函数内全部使用屏幕坐标系
 const computeArea = (a, b, c) => {
@@ -25,58 +20,290 @@ const computeArea = (a, b, c) => {
   );
 };
 
-// 使用光栅绘制三角形
-const drawTriangleData = (a, b, c, ctx) => {
+// 判断点是否在三角形内
+const isPointInsideTriangle = (a, b, c, point) => {
+  const ABD = computeArea(a, b, point);
+  const ACD = computeArea(a, c, point);
+  const BCD = computeArea(b, c, point);
+  const ABC = computeArea(a, b, c);
+
+  return ABC === ABD + ACD + BCD; // 面积法，相等则在三角形内
+};
+
+
+
+/** 使用光栅绘制三角形 */
+const drawTriangleData = (triangleArr, ctx,zBufferArr) => {
+  computeTriangle(triangleArr, ctx,zBufferArr)
+
+
+
   // 绘制三角形前置准备
-  const arr = [a, b, c];
+
+  const arr = [];
+  arr.push(triangleArr[0].computerXy)
+  arr.push(triangleArr[1].computerXy)
+  arr.push(triangleArr[2].computerXy)
+
+
   let [maxX, maxY, minX, minY] = [arr[0].x, arr[0].y, arr[0].x, arr[0].y];
 
   // 计算出包含三角形的矩形区域
-  arr.forEach((element) => {
-    if (element.x > maxX) {
-      maxX = element.x;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].x > maxX) {
+      maxX = arr[i].x
     }
-
-    if (element.x < minX) {
-      minX = element.x;
+    if (arr[i].y > maxY) {
+      maxY = arr[i].y
     }
-    if (element.y > maxY) {
-      maxY = element.y;
+    if (arr[i].x < minX) {
+      minX = arr[i].x
     }
-    if (element.y < minY) {
-      minY = element.y;
+    if (arr[i].y < minY) {
+      minY = arr[i].y
     }
-  });
+  }
 
   let [width, height] = [maxX - minX, maxY - minY];
 
-  let colorArr = colorToRGB(ctx.fillStyle);
+  if (width == 0 || height == 0) {
+    return
+  }
 
-  for (let y = minY; y <= maxY; y++) {
-    let count = 0;
-    let left = 0;
-    let leftCheck = true;
-    for (let x = minX; x <= maxX; x++) {
-      const point = { x: x, y: y };
-      let [xx, yy] = [x - minX, y - minY];
-      if (isPointInsideTriangle(a, b, c, point)) {
-        if (leftCheck) {
-          left = xx;
-          leftCheck = false;
-        }
-
-        // 对每一个点，都得确定深度，这里需要从此坐标发出一条射线，与原物相交
+  let myImageData = ctx.getImageData(0, 0, 1000, 1000);  // get到整个画布数组
 
 
-        
-        count++;
+
+
+  // 逐个像素上色
+  for (let y = 0; y <= height; y++) {
+    for (let x = 0; x <= width; x++) {
+      const point = { x: x + minX, y: y + minY };
+
+      if (isPointInsideTriangle(arr[0], arr[1], arr[2], point)) {
+        myImageData.data[(y + minY) * (1000 * 4) + (x + minX) * 4 + 0] = 255
+        myImageData.data[(y + minY) * (1000 * 4) + (x + minX) * 4 + 1] = 128
+        myImageData.data[(y + minY) * (1000 * 4) + (x + minX) * 4 + 2] = 128
+        myImageData.data[(y + minY) * (1000 * 4) + (x + minX) * 4 + 3] = 255
       }
     }
 
-    ctx.fillRect(minX + 200 + left, y + 400, count, 1);
   }
 
+
+  ctx.putImageData(myImageData, 0, 0)
   var timestampEnd = Date.parse(new Date());
+
 };
 
+
+// 对三角形进行基本处理
+const computeTriangle = (triangleArr, ctx, zBufferArr) => {
+  let str = ""
+  triangleArr.sort((a, b) => a.computerXy.y - b.computerXy.y)   // 根据对象属性的值进行排序，现在是按照y值进行排序
+
+  const arr = [triangleArr[0].computerXy, triangleArr[1].computerXy, triangleArr[2].computerXy]
+
+
+  let [maxX, maxY, minX, minY] = [arr[0].x, arr[0].y, arr[0].x, arr[0].y];
+
+  // 计算出包含三角形的矩形区域
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].x > maxX) {
+      maxX = arr[i].x
+    }
+    if (arr[i].y > maxY) {
+      maxY = arr[i].y
+    }
+    if (arr[i].x < minX) {
+      minX = arr[i].x
+    }
+    if (arr[i].y < minY) {
+      minY = arr[i].y
+    }
+  }
+
+  let [width, height] = [maxX - minX, maxY - minY];
+
+  // 确定顺序，也就是y值第二的点第一个的左和第二个点在右两种情况
+  let dP1P2 = arr[1].x - arr[0].x / arr[1].y - arr[0].y
+
+  let dP1P3 = arr[2].x - arr[0].x / arr[2].y - arr[0].y
+
+
+  // 然后根据左右分别进行处理
+
+  if (dP1P2 > dP1P3) {
+    console.log("右");    // 这里屏幕坐标，所以右，平面直角应该是左，参考 https://www.kancloud.cn/digest/soft-3d-engine/130056
+
+    // 上半部分
+    for (let i = minY; i < triangleArr[1].computerXy.y; i++) {
+      // 高为1，用1/(p3.y-p1.y)就是z的比值
+
+      let leftZ = triangleArr[0].z + (triangleArr[2].z - triangleArr[0].z) * ((i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y))
+      let rightZ = triangleArr[0].z + (triangleArr[1].z - triangleArr[0].z) * ((i - minY) / (triangleArr[1].computerXy.y - triangleArr[0].computerXy.y))
+
+
+      let leftX = triangleArr[0].computerXy.x + (triangleArr[2].computerXy.x - triangleArr[0].computerXy.x) * ((i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y))
+
+      let rightX = triangleArr[0].computerXy.x + (triangleArr[1].computerXy.x - triangleArr[0].computerXy.x) * (i - minY) / (triangleArr[1].computerXy.y - triangleArr[0].computerXy.y)
+
+      let lineWidth = rightX - leftX
+
+
+
+      // 左和右找到了，当前像素还得找
+      for (let j = minX; j < maxX; j++) {
+        const point = { x: j, y: i };
+
+        if (isPointInsideTriangle(arr[0], arr[1], arr[2], point)) {
+
+          // 根据j求当前z
+          let pixelZ = (leftZ + (j - minX) / (lineWidth))
+
+          str += `${pixelZ} `
+
+          //  对比z-buffer，深度小于才渲染
+          if (i < 1000 && j < 1000) {
+            if (zBufferArr[i][j] > pixelZ ) {
+              ctx.fillRect(j, i - 200, 1, 1)
+              zBufferArr[i][j] = pixelZ
+            }
+
+          }
+
+
+        }
+      }
+      str += "\n"
+
+    }
+    // 下半部分
+    for (let i =  triangleArr[1].computerXy.y;  i<triangleArr[2].computerXy.y; i++) {
+      // 下半也是求左右，求均值
+      let leftZ = triangleArr[0].z + (triangleArr[2].z - triangleArr[0].z) * ((i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y))
+      let rightZ = triangleArr[1].z + (triangleArr[2].z - triangleArr[1].z) * ((i - triangleArr[1].computerXy.y) / (triangleArr[2].computerXy.y - triangleArr[1].computerXy.y))
+
+
+      let leftX = triangleArr[0].computerXy.x + (triangleArr[2].computerXy.x - triangleArr[0].computerXy.x) * ((i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y))
+
+      let rightX = triangleArr[1].computerXy.x + (triangleArr[2].computerXy.x - triangleArr[1].computerXy.x) * (i - triangleArr[1].computerXy.y) / (triangleArr[2].computerXy.y - triangleArr[1].computerXy.y)
+
+      let lineWidth = rightX - leftX
+
+      for (let j = minX; j < maxX; j++) {
+        const point = { x: j, y: i };
+
+        if (isPointInsideTriangle(arr[0], arr[1], arr[2], point)) {
+
+          // 根据j求当前z
+          let pixelZ = (leftZ + (j - minX) / (lineWidth))
+
+        
+          str += `${pixelZ} `
+
+          //  对比z-buffer，深度小于才渲染
+          if (i < 1000 && j < 1000) {
+            if (zBufferArr[i][j] > pixelZ) {
+              ctx.fillRect(j, i - 200, 1, 1)
+             
+            }
+
+          }
+
+
+        }
+      }
+      str += "\n"
+
+    }
+
+
+
+
+  }
+  else {
+    console.log("左");
+    console.log(ctx.fillStyle);
+    // 上半部分
+    for (let i = minY; i < triangleArr[1].computerXy.y; i++) {
+      // 高为1，用1/(p3.y-p1.y)就是z的比值
+
+      let leftZ = triangleArr[0].z + (triangleArr[1].z - triangleArr[0].z) * ((i - minY) / (triangleArr[1].computerXy.y - triangleArr[0].computerXy.y))
+      let rightZ = triangleArr[0].z + (triangleArr[2].z - triangleArr[0].z) * ((i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y))
+
+
+      let leftX = triangleArr[0].computerXy.x + (triangleArr[1].computerXy.x - triangleArr[0].computerXy.x) * ((i - minY) / (triangleArr[1].computerXy.y - triangleArr[0].computerXy.y))
+      let rightX = triangleArr[0].computerXy.x + (triangleArr[2].computerXy.x - triangleArr[0].computerXy.x) * (i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y)
+
+      let lineWidth = rightX - leftX
+
+
+
+   
+  
+      for (let j = minX; j < maxX; j++) {
+
+        const point = { x: j, y: i };
+        if (isPointInsideTriangle(arr[0], arr[1], arr[2], point)) {
+
+          // 根据j求当前z
+          let pixelZ = (leftZ + (j - minX) / (lineWidth))
+          str += `${pixelZ} `
+
+          //  对比z-buffer，深度小于才渲染
+          if (i < 1000 && j < 1000) {
+            if (zBufferArr[i][j] > pixelZ ) {
+              ctx.fillRect(j, i - 200, 1, 1)
+              zBufferArr[i][j] = pixelZ
+            }
+
+          }
+
+
+        }
+      }
+      str += "\n"
+
+    }
+    
+    // 下半部分
+    for (let i =  triangleArr[1].computerXy.y;  i<triangleArr[2].computerXy.y; i++) {
+      // 下半也是求左右，求均值
+      let leftZ = triangleArr[1].z + (triangleArr[2].z - triangleArr[1].z) * ((i -  triangleArr[1].computerXy.y) / (triangleArr[2].computerXy.y - triangleArr[1].computerXy.y))
+      let rightZ = triangleArr[0].z + (triangleArr[2].z - triangleArr[0].z) * ((i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y))
+
+      let leftX = triangleArr[1].computerXy.x + (triangleArr[2].computerXy.x - triangleArr[1].computerXy.x) * ((i -triangleArr[1].computerXy.y) / (triangleArr[2].computerXy.y - triangleArr[1].computerXy.y))
+      let rightX = triangleArr[0].computerXy.x + (triangleArr[2].computerXy.x - triangleArr[0].computerXy.x) * (i - minY) / (triangleArr[2].computerXy.y - triangleArr[0].computerXy.y)
+
+      let lineWidth = rightX - leftX
+
+      for (let j = minX; j < maxX; j++) {
+        const point = { x: j, y: i };
+
+        if (isPointInsideTriangle(arr[0], arr[1], arr[2], point)) {
+
+          // 根据j求当前z
+          let pixelZ = (leftZ + (j - minX) / (lineWidth))
+
+          str += `${pixelZ} `
+
+          //  对比z-buffer，深度小于才渲染
+          if (i < 1000 && j < 1000) {
+            if (zBufferArr[i][j] > pixelZ ) {
+              ctx.fillRect(j, i - 200, 1, 1)
+            }
+
+          }
+
+
+        }
+      }
+      str += "\n"
+
+    }
+  }
+
+
+}
 export { isPointInsideTriangle, computeArea, drawTriangleData };
