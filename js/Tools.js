@@ -48,4 +48,47 @@ const rotateX = (cube) => {
 
 }
 
-export { rotate2D, xyToComputerXy, project3Dto2D, rotateX };
+// 求三角形法向量
+function calculateNormal(p1, p2, p3) {
+  // 计算向量 v1 = p2 - p1
+  const v1 = {
+      x: p2.x - p1.x,
+      y: p2.y - p1.y,
+      z: p2.z - p1.z
+  };
+
+  // 计算向量 v2 = p3 - p1
+  const v2 = {
+      x: p3.x - p1.x,
+      y: p3.y - p1.y,
+      z: p3.z - p1.z
+  };
+
+  // 计算叉积 (v1 × v2)
+  const normal = {
+      x: v1.y * v2.z - v1.z * v2.y,
+      y: v1.z * v2.x - v1.x * v2.z,
+      z: v1.x * v2.y - v1.y * v2.x
+  };
+
+  // 可选：归一化法向量（如果需要单位法向量）
+  const length = Math.sqrt(
+      normal.x * normal.x +
+      normal.y * normal.y +
+      normal.z * normal.z
+  );
+  
+  if (length > 0) {
+      normal.x /= length;
+      normal.y /= length;
+      normal.z /= length;
+  }
+
+  return normal;
+}
+
+
+
+// const normal = calculateNormal(p1, p2, p3);
+// console.log("法向量:", normal); // 输出: { x: 0.57735, y: 0.57735, z: 0.57735 }（归一化后）
+export { rotate2D, xyToComputerXy, project3Dto2D, rotateX ,calculateNormal};

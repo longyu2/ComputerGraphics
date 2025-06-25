@@ -1,4 +1,4 @@
-import { vertices, flat } from "./bunny.js"
+import { vertices, flat } from "./js_models/bunny.js"
 
 // 采用左手系 摄像机原点为0坐标
 // 调整世界坐标相对于摄像机的位移
