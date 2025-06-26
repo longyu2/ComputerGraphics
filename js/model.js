@@ -1,10 +1,10 @@
-import { vertices, flat } from "./js_models/bunny.js"
+import { vertices, flat } from "./js_models/cube.js"
 
 // 采用左手系 摄像机原点为0坐标
 // 调整世界坐标相对于摄像机的位移
-let distanceZ = 25;
+let distanceZ = 105;
 let model = []
-let mut = 15 // 放大倍数
+let mut = 5 // 放大倍数
 
 for (let i = 0; i < flat.length; i++) {
 

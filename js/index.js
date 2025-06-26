@@ -11,7 +11,13 @@ const canvas = document.getElementById("tutorial");
 let ctx = canvas.getContext("2d");
 
 
-
+const img= new Image();
+img.src="./imgs/1.jpg"; // 纹理贴图图片
+let myimgdata = ctx.createImageData(1000, 1000); // 创建一个1000*1000的图像数据对象，用于纹理贴图
+img.onload = () => {
+  // ctx.drawImage(img, 0, 0, 1000, 1000); // 绘制纹理贴图
+  // myimgdata = ctx.getImageData(0, 0, 1000, 1000); // 获取纹理贴图的像素数据
+}
 
 let focalLength = 15; // 摄像机到视平面的距离，也就是焦距，焦距越大，物体占画面的比例越大，同时最大可视角度也变小
 
@@ -74,7 +80,7 @@ const renderFrame = () => {
 
   // 将所有模型一一绘制
   for (let i = 0; i < moedels.length; i++) {
-    drawFrame(moedels[i], distanceZ, angle, focalLength, ctx, Camera, zBufferArr);
+    drawFrame(moedels[i], distanceZ, angle, focalLength, ctx, Camera, zBufferArr,myimgdata);
   }
 
   initZBuffer() // 单帧绘制完成，重置深度缓存

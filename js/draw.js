@@ -1,7 +1,7 @@
 import { rotate2D, project3Dto2D, xyToComputerXy } from "./Tools.js";
 import { drawTriangleData } from "./drawTriangle.js"
 // 帧绘画函数
-const drawFrame = (model, distanceZ, angle, focalLength, ctx, Camera, zBufferArr,camera) => {
+const drawFrame = (model, distanceZ, angle, focalLength, ctx, Camera, zBufferArr,imageUV) => {
 
   for (let i = 0; i < model.length; i++) {
     for (let j = 0; j < 3; j++) {
@@ -29,7 +29,7 @@ const drawFrame = (model, distanceZ, angle, focalLength, ctx, Camera, zBufferArr
       let point2D = project3Dto2D(modelPoint.x - Camera.x, modelPoint.y - Camera.y, modelPoint.z - Camera.z, focalLength)
       model[i][j].xy = point2D  // 将二维信息记录
 
-      point2D = (xyToComputerXy(point2D.x, point2D.y, 15, 15, 3)); // 此时数据被完全二维化
+      point2D = (xyToComputerXy(point2D.x, point2D.y, 15, 15, 2)); // 此时数据被完全二维化
 
       model[i][j].computerXy = point2D  // 将计算机坐标的二维信息记录
     }
@@ -42,7 +42,8 @@ const drawFrame = (model, distanceZ, angle, focalLength, ctx, Camera, zBufferArr
     drawTriangleData(
       model[i],
       ctx,
-      zBufferArr
+      zBufferArr,
+      imageUV
     );
 
 
